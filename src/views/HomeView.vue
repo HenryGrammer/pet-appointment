@@ -254,7 +254,6 @@ html body {
                             class="p-4 w-full bg-white mt-3 rounded-md"
                             rows="3"
                             v-model="formValue.reason"
-                            required
                         ></textarea>
                     </div>
 
