@@ -48,7 +48,7 @@ html body {
                 </ul>
 
                 <p
-                    class="text-white text-3xl md:text-6xl font-black whitespace-pre-line break-words"
+                    class="text-white text-3xl md:text-6xl font-black whitespace-pre-line break-words mt-30"
                 >
                     We care for your little furry loved ones while
                 </p>
@@ -118,7 +118,9 @@ html body {
             >
                 <div class="flex items-center mt-10 md:mt-20">
                     <img src="../assets/images/paw.jpg" class="rounded-full h-16 md:h-20" />
-                    <span class="text-white text-xl md:text-2xl ml-4">PAWSTATIC</span>
+                    <span class="text-white text-xl md:text-2xl ml-4"
+                        ><a href="" @click.prevent="scrollTo('home')">PAWSTATIC</a></span
+                    >
                 </div>
                 <p class="font-bold text-white text-xl md:text-3xl mt-10 md:mt-20 text-center">
                     All services include:
@@ -137,33 +139,48 @@ html body {
                 We'll take your dog for a walk. Just tell us when!
             </p>
 
-            <form class="mt-10">
+            <form class="mt-10" @submit.prevent="appointmentCounter.createAppointment(formValue)">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-20">
                     <!-- Frequency -->
                     <div>
                         <label class="font-medium text-black">Frequency</label>
                         <div class="flex flex-wrap gap-2 mt-3">
-                            <button
-                                type="button"
-                                v-for="(frequency, index) in frequencies"
-                                :key="index"
-                                @click="selectedFrequency = frequency"
-                                :class="[
-                                    'px-4 py-2 rounded-lg text-sm font-medium w-full sm:w-auto',
-                                    selectedFrequency === frequency
-                                        ? 'bg-orange-300 text-white'
-                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-                                ]"
-                            >
-                                {{ frequency }}
-                            </button>
+                            <div class="space-y-2">
+                                <div class="flex flex-wrap gap-2">
+                                    <label
+                                        class="cursor-pointer"
+                                        v-for="(frequency, index) in frequencies"
+                                        :key="index"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="frequency"
+                                            :value="frequency"
+                                            class="sr-only peer"
+                                            v-model="formValue.frequency"
+                                            required
+                                        />
+                                        <div
+                                            class="px-4 py-2 rounded-md bg-gray-200 peer-checked:bg-orange-300 peer-checked:text-white peer-checked:shadow"
+                                        >
+                                            {{ frequency }}
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Start Date -->
                     <div>
                         <label class="font-medium text-black">Start Date</label>
-                        <input type="date" class="bg-white p-3 rounded-lg w-full mt-3" required />
+                        <input
+                            type="date"
+                            class="bg-white p-3 rounded-lg w-full mt-3"
+                            :min="dateToday"
+                            v-model="formValue.startDate"
+                            required
+                        />
                     </div>
 
                     <!-- Days -->
@@ -172,20 +189,29 @@ html body {
                             >Days <span class="font-thin">(Select all that apply)</span></label
                         >
                         <div class="flex flex-wrap gap-2 mt-3">
-                            <button
-                                type="button"
-                                v-for="(day, index) in days"
-                                :key="index"
-                                @click="selectedDay = day"
-                                :class="[
-                                    'px-4 py-2 rounded-lg text-sm font-medium w-full sm:w-auto',
-                                    selectedDay.includes(day)
-                                        ? 'bg-orange-300 text-white'
-                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-                                ]"
-                            >
-                                {{ day }}
-                            </button>
+                            <div class="space-y-2">
+                                <div class="flex flex-wrap gap-2">
+                                    <label
+                                        class="cursor-pointer"
+                                        v-for="(day, index) in days"
+                                        :key="index"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="day"
+                                            :value="day"
+                                            class="sr-only peer"
+                                            v-model="formValue.day"
+                                            required
+                                        />
+                                        <div
+                                            class="px-4 py-2 rounded-md bg-gray-200 peer-checked:bg-orange-300 peer-checked:text-white peer-checked:shadow"
+                                        >
+                                            {{ day }}
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -195,35 +221,64 @@ html body {
                             >Time <span class="font-thin">(Select all that apply)</span></label
                         >
                         <div class="flex flex-wrap gap-2 mt-3">
-                            <button
-                                type="button"
-                                v-for="(time, index) in times"
-                                :key="index"
-                                @click="selectedTime = time"
-                                :class="[
-                                    'px-4 py-2 rounded-lg text-sm font-medium w-full sm:w-auto',
-                                    selectedTime === time
-                                        ? 'bg-orange-300 text-white'
-                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-                                ]"
-                            >
-                                {{ time }}
-                            </button>
+                            <div class="space-y-2">
+                                <div class="flex flex-wrap gap-2">
+                                    <label
+                                        class="cursor-pointer"
+                                        v-for="(time, index) in times"
+                                        :key="index"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="time"
+                                            :value="time"
+                                            class="sr-only peer"
+                                            v-model="formValue.time"
+                                            required
+                                        />
+                                        <div
+                                            class="px-4 py-2 rounded-md bg-gray-200 peer-checked:bg-orange-300 peer-checked:text-white peer-checked:shadow"
+                                        >
+                                            {{ time }}
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Reason -->
                     <div class="md:col-span-2">
                         <label class="font-medium text-black">Reason</label>
-                        <textarea class="p-4 w-full bg-white mt-3 rounded-md" rows="3"></textarea>
+                        <textarea
+                            class="p-4 w-full bg-white mt-3 rounded-md"
+                            rows="3"
+                            v-model="formValue.reason"
+                            required
+                        ></textarea>
                     </div>
+
+                    
+                </div>
+                <div class="md-col-span-2 text-center">
+                    <button
+                        type="submit"
+                        class="p-3 pointer-events-auto rounded-full bg-black text-white mt-10 md:mt-20 w-full md:w-60 font-bold"
+                    >
+                        Schedule a visit
+                    </button>
                 </div>
             </form>
         </div>
     </section>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import { useAppointmentCounter } from '@/stores/appointmentCounter'
+
+const appointmentCounter = useAppointmentCounter()
+
+appointmentCounter.testConnection()
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const selectedDay = ref('Mon')
@@ -231,8 +286,10 @@ const selectedDay = ref('Mon')
 const times = ['Morning', 'Afternoon', 'Evening']
 const selectedTime = ref('Morning')
 
-const frequencies = ['Morning', 'Afternoon']
-const selectedFrequency = ref('Morning')
+const frequencies = ['Monthly', 'One Time']
+const selectedFrequency = ref('')
+
+const dateToday = new Date().toISOString().split('T')[0]
 
 const scrollTo = (pageName) => {
     const el = document.getElementById(pageName)
@@ -241,4 +298,6 @@ const scrollTo = (pageName) => {
         el.scrollIntoView({ behavior: 'smooth' })
     }
 }
+
+const formValue = reactive({})
 </script>
